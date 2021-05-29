@@ -7,7 +7,6 @@ interface AccountProps {
 }
 
 const Account: React.FC<AccountProps> = ({ title, amount, description }) => {
-	console.log(amount);
 	return (
 		<section className='account'>
 			<div className='account-content-wrapper'>

@@ -1,9 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import userAPI from '../../app/userAPI';
 
 interface AuthState {
 	isLoggedIn: boolean;
 	isLoggingIn: boolean;
-	error: string | null;
+	error: string | null | unknown;
 }
 
 const initialState: AuthState = {
@@ -12,23 +13,36 @@ const initialState: AuthState = {
 	error: null,
 };
 
+export const request = createAsyncThunk(
+	'auth/request',
+	async ({ email, password }: { email: string; password: string }) => {
+		const res = await userAPI.post('/login', { email, password });
+		return res.data;
+	}
+);
+
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	reducers: {
-		request(state) {
-			state.isLoggingIn = true;
+		logout(state) {
+			localStorage.setItem('token', '');
+			return (state = initialState);
 		},
-		success(state, action) {
+	},
+	extraReducers: (builder) => {
+		builder.addCase(request.fulfilled, (state, { payload }) => {
 			state.isLoggedIn = true;
 			state.isLoggingIn = false;
-		},
-		failure(state, action) {
+			state.error = null;
+			localStorage.setItem('token', payload.body.token);
+		});
+		builder.addCase(request.rejected, (state, { error }) => {
 			state.isLoggingIn = false;
-			state.error = 'error';
-		},
+			state.error = error.message;
+		});
 	},
 });
 
-export const { request, success, failure } = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

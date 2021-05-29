@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from './../../app/hooks';
 import { request } from './authSlice';
 
 const LoginPage = () => {
-	const user = useAppSelector((state) => state.user);
+	const auth = useAppSelector((state) => state.auth);
 	const dispatch = useAppDispatch();
 
 	const [email, setEmail] = useState('');
@@ -24,10 +24,10 @@ const LoginPage = () => {
 
 	const handleSubmit = (e: React.SyntheticEvent) => {
 		e.preventDefault();
-		// dispatch(request(email, password));
+		dispatch(request({ email, password }));
 	};
 
-	// if (user.isLoggedIn) return <Redirect to='/profile' />;
+	if (auth.isLoggedIn) return <Redirect to='/profile' />;
 
 	return (
 		<main className='main bg-dark'>

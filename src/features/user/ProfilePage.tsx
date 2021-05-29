@@ -3,6 +3,7 @@ import { Redirect } from 'react-router';
 import './ProfilePage.scss';
 import Account from '../../components/Account/Account';
 import { useAppDispatch, useAppSelector } from './../../app/hooks';
+import { getUserName, editUserName } from './userSlice';
 
 const accounts = [
 	{
@@ -23,19 +24,18 @@ const accounts = [
 ];
 
 const ProfilePage = () => {
+	const auth = useAppSelector((state) => state.auth);
 	const user = useAppSelector((state) => state.user);
 	const dispatch = useAppDispatch();
 
 	const [isEditing, setIsEditing] = useState(false);
-	const [editedName, setEditedName] = useState({
-		firstName: '',
-		lastName: '',
-	});
+	const [firstName, setFirstName] = useState('');
+	const [lastName, setLastName] = useState('');
 
 	// Gets profile information
-	// useEffect(() => {
-	// 	dispatch(getUserName(user.token));
-	// }, [dispatch, user.token]);
+	useEffect(() => {
+		dispatch(getUserName());
+	}, [dispatch]);
 
 	// Updates document title
 	useEffect(() => {
@@ -44,30 +44,24 @@ const ProfilePage = () => {
 
 	const handleSubmit = (e: React.SyntheticEvent) => {
 		e.preventDefault();
-
 		// Both fields have to not be empty
-		if (editedName.firstName && editedName.lastName !== '') {
-			// dispatch(
-			// 	editUserName(
-			// 		editedName.firstName,
-			// 		editedName.lastName,
-			// 		user.token
-			// 	)
-			// );
+		if (firstName && lastName !== '') {
+			dispatch(editUserName({ firstName, lastName }));
 
 			// Resets local state
-			setEditedName({ firstName: '', lastName: '' });
+			setFirstName('');
+			setLastName('');
 			setIsEditing(false);
 		}
 	};
 
 	const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
 		e.currentTarget.id === 'firstNameInput'
-			? setEditedName({ ...editedName, firstName: e.currentTarget.value })
-			: setEditedName({ ...editedName, lastName: e.currentTarget.value });
+			? setFirstName(e.currentTarget.value)
+			: setLastName(e.currentTarget.value);
 	};
 
-	// if (!user.isLoggedIn) return <Redirect to='/' />;
+	if (!auth.isLoggedIn) return <Redirect to='/' />;
 
 	return (
 		<main className='main bg-dark'>
@@ -94,14 +88,14 @@ const ProfilePage = () => {
 								id='firstNameInput'
 								type='text'
 								placeholder={user.firstName}
-								value={editedName.firstName}
+								value={firstName}
 								onChange={handleChange}
 							/>
 							<input
 								id='lastNameInput'
 								type='text'
 								placeholder={user.lastName}
-								value={editedName.lastName}
+								value={lastName}
 								onChange={handleChange}
 							/>
 						</div>
