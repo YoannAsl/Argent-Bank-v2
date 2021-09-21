@@ -5,7 +5,7 @@ Argent Bank is a banking web application made with TypeScript and the MERN stack
 
 -   [React](https://reactjs.org/)
 -   [TypeScript](https://www.typescriptlang.org/)
--   [Redux](https://redux.js.org/)
+-   [Redux Toolkit](https://redux-toolkit.js.org/)
 -   [React-Redux](https://react-redux.js.org/)
 -   [axios](https://github.com/axios/axios)
 -   [node-sass](https://www.npmjs.com/package/node-sass)
